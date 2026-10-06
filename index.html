@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light" />
+  <link rel="icon" href="data:," />
+  <title>Palette of the Seasons</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #ffffff;
+      --ink: #101010;
+      --quiet: #666666;
+      --line: #d8d8d8;
+      --focus: #101010;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, sans-serif;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; }
+
+    .page {
+      width: min(100%, 1160px);
+      margin: 0 auto;
+      padding: clamp(24px, 4.5vw, 64px) clamp(22px, 5vw, 64px) 28px;
+    }
+
+    .intro {
+      position: relative;
+      min-height: min(58vh, 650px);
+      display: grid;
+      align-content: end;
+      padding-bottom: clamp(48px, 8vw, 92px);
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(3rem, 7.4vw, 6.6rem);
+      line-height: .91;
+      letter-spacing: -.072em;
+      font-weight: 540;
+    }
+
+    .thesis {
+      max-width: 490px;
+      margin: 26px 0 0;
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
+      line-height: 1.55;
+      letter-spacing: -.015em;
+      color: var(--quiet);
+    }
+
+    .sound-control {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 0;
+      border: 0;
+      background: transparent;
+      color: var(--quiet);
+      font: inherit;
+      font-size: .75rem;
+      letter-spacing: .01em;
+      cursor: pointer;
+    }
+
+    .sound-control__icon {
+      width: 29px;
+      height: 29px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      color: var(--ink);
+      transition: border-color 160ms ease;
+    }
+
+    .sound-control svg {
+      width: 10px;
+      height: 10px;
+      overflow: visible;
+    }
+
+    .sound-control .pause-mark { display: none; }
+    .sound-control[aria-pressed="true"] .play-mark { display: none; }
+    .sound-control[aria-pressed="true"] .pause-mark { display: block; }
+
+    .sound-control:hover .sound-control__icon { border-color: var(--ink); }
+
+    .sound-control:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 5px;
+    }
+
+    .projects {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .project-link {
+      min-height: 92px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 24px;
+      padding: 0 2px;
+      text-decoration: none;
+      font-size: clamp(1.25rem, 2.5vw, 1.95rem);
+      letter-spacing: -.035em;
+      transition: color 160ms ease, padding 160ms ease;
+    }
+
+    .project-link:first-child {
+      padding-right: clamp(18px, 4vw, 48px);
+      border-right: 1px solid var(--line);
+    }
+
+    .project-link:last-child { padding-left: clamp(18px, 4vw, 48px); }
+
+    .project-link::after {
+      content: "↗";
+      font-size: .82em;
+      color: var(--quiet);
+      transform: translateY(-2px);
+    }
+
+    .project-link:hover,
+    .project-link:focus-visible { color: var(--quiet); }
+
+    .project-link:focus-visible,
+    .commission-link:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 5px;
+    }
+
+    .journal {
+      min-height: clamp(56px, 7vw, 72px);
+      display: grid;
+      grid-template-columns: clamp(118px, 18vw, 184px) 1fr;
+      border-top: 1px solid var(--line);
+    }
+
+    .journal:first-of-type {
+      margin-top: clamp(58px, 8vw, 94px);
+    }
+
+    .journal:last-of-type {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .entry-head {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 3px;
+      padding-right: clamp(12px, 2vw, 24px);
+    }
+
+    .entry-head h2,
+    .entry-head p {
+      margin: 0;
+      font-size: .82rem;
+      line-height: 1.3;
+      font-weight: 500;
+      letter-spacing: .01em;
+    }
+
+    .entry-head p { color: var(--quiet); }
+
+    .open-space {
+      min-width: 0;
+      display: grid;
+    }
+
+    .swatch-row {
+      width: 100%;
+      min-height: clamp(56px, 7vw, 72px);
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .swatch-row[data-photo] { cursor: pointer; }
+
+    .swatch-row[data-photo]:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 5px;
+    }
+
+    .photo-viewer {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: grid;
+      place-items: center;
+      padding: clamp(18px, 4vw, 48px);
+      border: 0;
+      background: rgba(255, 255, 255, .96);
+      opacity: 0;
+      visibility: hidden;
+      cursor: zoom-out;
+      transition: opacity 220ms ease, visibility 220ms ease;
+    }
+
+    .photo-viewer.is-open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .photo-viewer img {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: min(76vw, 768px);
+      height: min(88vh, 1024px);
+      object-fit: contain;
+    }
+
+    .entry-note { display: none; }
+
+    footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: clamp(84px, 13vw, 148px);
+      padding-top: 20px;
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
+      border-top: 1px solid var(--line);
+      color: var(--quiet);
+      font-size: .72rem;
+      line-height: 1.45;
+    }
+
+    .commission {
+      max-width: 290px;
+      text-align: right;
+    }
+
+    .commission-link {
+      padding: 0;
+      border: 0;
+      border-bottom: 1px solid currentColor;
+      background: transparent;
+      color: var(--ink);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .commission-note { display: block; margin-top: 7px; }
+
+    .commission-panel {
+      display: none;
+      margin-top: clamp(84px, 13vw, 148px);
+      padding: clamp(28px, 5vw, 58px) 0;
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .commission-panel.is-open { display: block; }
+    .commission-panel.is-open + footer {
+      margin-top: 0;
+      border-top: 0;
+    }
+
+    .commission-heading {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 28px;
+      margin-bottom: clamp(36px, 6vw, 64px);
+    }
+
+    .commission-heading h2 {
+      max-width: 650px;
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4.6rem);
+      line-height: .98;
+      letter-spacing: -.055em;
+      font-weight: 520;
+    }
+
+    .commission-heading p {
+      max-width: 450px;
+      margin: 18px 0 0;
+      color: var(--quiet);
+      font-size: .95rem;
+      line-height: 1.55;
+    }
+
+    .commission-close {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--ink);
+      font: inherit;
+      font-size: 1.25rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .commission-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 34px clamp(28px, 5vw, 72px);
+    }
+
+    .field { min-width: 0; }
+    .field--wide { grid-column: 1 / -1; }
+
+    .field label,
+    .field legend {
+      display: block;
+      margin: 0 0 10px;
+      padding: 0;
+      color: var(--ink);
+      font-size: .76rem;
+      line-height: 1.35;
+      font-weight: 560;
+      letter-spacing: .015em;
+    }
+
+    .field input[type="text"],
+    .field input[type="email"],
+    .field select,
+    .field textarea {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 0;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      color: var(--ink);
+      font: inherit;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .field textarea {
+      min-height: 112px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus { border-bottom-color: var(--ink); }
+
+    .field fieldset {
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .material-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .material-option { position: relative; }
+    .material-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .material-option span {
+      display: block;
+      padding: 9px 13px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--quiet);
+      font-size: .82rem;
+      cursor: pointer;
+      transition: border-color 140ms ease, color 140ms ease, background 140ms ease;
+    }
+
+    .material-option input:checked + span {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .material-option input:focus-visible + span {
+      outline: 2px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      min-height: 54px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .toggle-copy strong,
+    .toggle-copy small { display: block; }
+
+    .toggle-copy strong {
+      font-size: .9rem;
+      font-weight: 540;
+    }
+
+    .toggle-copy small {
+      margin-top: 3px;
+      color: var(--quiet);
+      font-size: .75rem;
+      line-height: 1.35;
+    }
+
+    .toggle {
+      position: relative;
+      width: 42px;
+      height: 24px;
+      flex: 0 0 auto;
+    }
+
+    .toggle input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .toggle span {
+      position: absolute;
+      inset: 0;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 140ms ease, border-color 140ms ease;
+    }
+
+    .toggle span::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--ink);
+      transition: transform 140ms ease, background 140ms ease;
+    }
+
+    .toggle input:checked + span {
+      border-color: var(--ink);
+      background: var(--ink);
+    }
+
+    .toggle input:checked + span::after {
+      transform: translateX(18px);
+      background: var(--paper);
+    }
+
+    .toggle input:focus-visible + span {
+      outline: 2px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .form-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding-top: 8px;
+    }
+
+    .copy-inquiry {
+      min-height: 44px;
+      padding: 0 20px;
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      background: var(--ink);
+      color: var(--paper);
+      font: inherit;
+      font-size: .82rem;
+      cursor: pointer;
+    }
+
+    .form-status {
+      margin: 0;
+      color: var(--quiet);
+      font-size: .78rem;
+      line-height: 1.4;
+    }
+
+    .commission-close:focus-visible,
+    .copy-inquiry:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 4px;
+    }
+
+    @media (max-width: 680px) {
+      .page { padding-top: 18px; }
+
+      .intro {
+        min-height: 48vh;
+        padding-bottom: 48px;
+      }
+
+      h1 {
+        max-width: 5.2em;
+        font-size: clamp(3.2rem, 17vw, 5.2rem);
+      }
+
+      .projects { grid-template-columns: 1fr; }
+
+      .project-link { min-height: 76px; }
+
+      .project-link:first-child {
+        padding-right: 2px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .project-link:last-child { padding-left: 2px; }
+
+      .journal {
+        min-height: 52px;
+        grid-template-columns: 102px 1fr;
+      }
+
+      .journal:first-of-type { margin-top: 60px; }
+
+      .entry-head {
+        gap: 2px;
+        padding-right: 10px;
+      }
+
+      .entry-head h2,
+      .entry-head p { font-size: .72rem; }
+
+      .swatch-row { min-height: 52px; }
+
+      .commission-heading {
+        gap: 16px;
+        margin-bottom: 38px;
+      }
+
+      .commission-heading h2 { font-size: 2.65rem; }
+      .commission-heading p { font-size: .88rem; }
+      .commission-form { grid-template-columns: 1fr; gap: 28px; }
+      .field--wide,
+      .form-actions { grid-column: 1; }
+      .form-actions { align-items: flex-start; flex-direction: column; }
+      .copy-inquiry { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .project-link,
+      .photo-viewer,
+      .sound-control__icon { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="intro">
+      <button class="sound-control" type="button" aria-pressed="false" aria-label="Play the quiet ambient score">
+        <span class="sound-control__icon" aria-hidden="true">
+          <svg viewBox="0 0 12 12" focusable="false">
+            <path class="play-mark" d="M3.5 2.2 9.4 6l-5.9 3.8z" fill="currentColor"></path>
+            <g class="pause-mark" fill="currentColor">
+              <rect x="3" y="2.2" width="2" height="7.6"></rect>
+              <rect x="7" y="2.2" width="2" height="7.6"></rect>
+            </g>
+          </svg>
+        </span>
+        <span class="sound-control__label">Listen</span>
+      </button>
+      <h1>Palette of<br>the seasons.</h1>
+      <p class="thesis">A slow color journal drawn from the places, rooms and moments worth noticing.</p>
+    </header>
+
+    <nav class="projects" aria-label="Other projects">
+      <a class="project-link" href="https://vista.genovesi.us" target="_blank" rel="noopener noreferrer">Vista Oceans</a>
+      <a class="project-link" href="https://lanceynyc.com" target="_blank" rel="noopener noreferrer">Lancey</a>
+    </nav>
+
+    <article class="journal" aria-labelledby="entry-title">
+      <div class="entry-head">
+        <h2 id="entry-title">First of the season</h2>
+        <p>Autumn 2026</p>
+      </div>
+      <div class="open-space">
+        <div class="swatch-row" role="img" aria-label="Six colors sampled from the garden photograph">
+          <span style="background-color: #a5b3cb"></span>
+          <span style="background-color: #e6e9e9"></span>
+          <span style="background-color: #bec0b4"></span>
+          <span style="background-color: #9aa437"></span>
+          <span style="background-color: #21221c"></span>
+          <span style="background-color: #d9c8ac"></span>
+        </div>
+      </div>
+      <p class="entry-note">All afternoon, the light rewrites the green.</p>
+    </article>
+
+    <article class="journal" aria-labelledby="shallow-water-title">
+      <div class="entry-head">
+        <h2 id="shallow-water-title">Shallow water</h2>
+        <p>Summer 2026</p>
+      </div>
+      <div class="open-space">
+        <div class="swatch-row" role="button" tabindex="0" aria-label="View the photograph behind the Shallow water palette" aria-expanded="false" data-photo="assets/shallow-water.jpg" data-alt="Clear turquoise shallows beneath a deep blue summer sky">
+          <span style="background-color: #0a4da1"></span>
+          <span style="background-color: #2f7fc4"></span>
+          <span style="background-color: #0e9aa8"></span>
+          <span style="background-color: #7fd4c9"></span>
+          <span style="background-color: #c4e3d8"></span>
+          <span style="background-color: #f2f6f8"></span>
+        </div>
+      </div>
+      <p class="entry-note">By noon the sea had handed the sky back, a shade lighter.</p>
+    </article>
+
+    <article class="journal" aria-labelledby="still-water-title">
+      <div class="entry-head">
+        <h2 id="still-water-title">Still water</h2>
+        <p>Summer 2026</p>
+      </div>
+      <div class="open-space">
+        <div class="swatch-row" role="button" tabindex="0" aria-label="View the photograph behind the Still water palette" aria-expanded="false" data-photo="assets/still-water.jpg" data-alt="Tall marsh grass rising from still dark water">
+          <span style="background-color: #2e3231"></span>
+          <span style="background-color: #3f4442"></span>
+          <span style="background-color: #6b7a5e"></span>
+          <span style="background-color: #8a9377"></span>
+          <span style="background-color: #a8a583"></span>
+          <span style="background-color: #c3cdd2"></span>
+        </div>
+      </div>
+      <p class="entry-note">The marsh keeps its own slow hours.</p>
+    </article>
+
+    <article class="journal" aria-labelledby="slow-afternoon-title">
+      <div class="entry-head">
+        <h2 id="slow-afternoon-title">Slow afternoon</h2>
+        <p>Summer 2026</p>
+      </div>
+      <div class="open-space">
+        <div class="swatch-row" role="button" tabindex="0" aria-label="View the photograph behind the Slow afternoon palette" aria-expanded="false" data-photo="assets/slow-afternoon.jpg" data-alt="A wristwatch catching afternoon sun against a pale sofa">
+          <span style="background-color: #1d3a5f"></span>
+          <span style="background-color: #8a8474"></span>
+          <span style="background-color: #b9bdc2"></span>
+          <span style="background-color: #c23b2e"></span>
+          <span style="background-color: #c68e5f"></span>
+          <span style="background-color: #e8e2d2"></span>
+        </div>
+      </div>
+      <p class="entry-note">An afternoon with nowhere to be.</p>
+    </article>
+
+    <article class="journal" aria-labelledby="dinner-late-title">
+      <div class="entry-head">
+        <h2 id="dinner-late-title">Dinner, late</h2>
+        <p>Summer 2026</p>
+      </div>
+      <div class="open-space">
+        <div class="swatch-row" role="button" tabindex="0" aria-label="View the photograph behind the Dinner, late palette" aria-expanded="false" data-photo="assets/dinner-late.jpg" data-alt="Two friends together at a warmly lit late dinner">
+          <span style="background-color: #1c1a18"></span>
+          <span style="background-color: #5f7f3a"></span>
+          <span style="background-color: #7a8a86"></span>
+          <span style="background-color: #b08d3e"></span>
+          <span style="background-color: #d43a2f"></span>
+          <span style="background-color: #f2b705"></span>
+        </div>
+      </div>
+      <p class="entry-note">Time, for once, in a good mood.</p>
+    </article>
+
+    <article class="journal" aria-labelledby="long-way-title">
+      <div class="entry-head">
+        <h2 id="long-way-title">The long way</h2>
+        <p>Summer 2026</p>
+      </div>
+      <div class="open-space">
+        <div class="swatch-row" role="button" tabindex="0" aria-label="View the photograph behind The long way palette" aria-expanded="false" data-photo="assets/the-long-way.jpg" data-alt="An older man and a young child settled into a light-colored car interior">
+          <span style="background-color: #17181a"></span>
+          <span style="background-color: #8b8b88"></span>
+          <span style="background-color: #a9c2d8"></span>
+          <span style="background-color: #b98d6e"></span>
+          <span style="background-color: #cfd8ce"></span>
+          <span style="background-color: #dcd9d2"></span>
+        </div>
+      </div>
+      <p class="entry-note">Everybody comfortable, nobody in a hurry.</p>
+    </article>
+
+    <section class="commission-panel" id="commission-form" aria-labelledby="commission-title" hidden>
+      <div class="commission-heading">
+        <div>
+          <h2 id="commission-title">Tell me the story.</h2>
+          <p>Share the memory, material and scale you have in mind. The finished brief can be copied and sent through your usual contact.</p>
+        </div>
+        <button class="commission-close" type="button" aria-label="Close commission inquiry">×</button>
+      </div>
+
+      <form class="commission-form">
+        <div class="field">
+          <label for="inquiry-name">Name</label>
+          <input id="inquiry-name" name="name" type="text" autocomplete="name" required>
+        </div>
+
+        <div class="field">
+          <label for="inquiry-email">Email</label>
+          <input id="inquiry-email" name="email" type="email" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label for="story-category">Story category</label>
+          <select id="story-category" name="category" required>
+            <option value="">Choose one</option>
+            <option>A person</option>
+            <option>A place</option>
+            <option>A season</option>
+            <option>A memory</option>
+            <option>A gathering</option>
+            <option>Another story</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="piece-size">Size or setting</label>
+          <input id="piece-size" name="size" type="text" placeholder="Dimensions, wall or room">
+        </div>
+
+        <div class="field field--wide">
+          <fieldset>
+            <legend>Material</legend>
+            <div class="material-options">
+              <label class="material-option"><input type="radio" name="material" value="Canvas" checked><span>Canvas</span></label>
+              <label class="material-option"><input type="radio" name="material" value="Linen"><span>Linen</span></label>
+              <label class="material-option"><input type="radio" name="material" value="Burlap"><span>Burlap</span></label>
+              <label class="material-option"><input type="radio" name="material" value="Raw cotton"><span>Raw cotton</span></label>
+              <label class="material-option"><input type="radio" name="material" value="Wood panel"><span>Wood panel</span></label>
+              <label class="material-option"><input type="radio" name="material" value="Newspaper"><span>Newspaper</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <div class="toggle-row">
+            <span class="toggle-copy">
+              <strong>Collage</strong>
+              <small>Layer photographs, paper or found material.</small>
+            </span>
+            <label class="toggle">
+              <input type="checkbox" name="collage" aria-label="Include collage">
+              <span aria-hidden="true"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="color-direction">Color direction</label>
+          <input id="color-direction" name="color" type="text" placeholder="A palette, room or season">
+        </div>
+
+        <div class="field field--wide">
+          <label for="inquiry-story">The story</label>
+          <textarea id="inquiry-story" name="story" placeholder="What should the piece remember, hold or say?" required></textarea>
+        </div>
+
+        <div class="field">
+          <label for="inquiry-timing">Timing</label>
+          <input id="inquiry-timing" name="timing" type="text" placeholder="A date, occasion or open-ended">
+        </div>
+
+        <div class="field">
+          <label for="inquiry-budget">Budget range</label>
+          <input id="inquiry-budget" name="budget" type="text" inputmode="decimal" placeholder="Optional">
+        </div>
+
+        <div class="form-actions">
+          <button class="copy-inquiry" type="submit">Copy inquiry</button>
+          <p class="form-status" role="status" aria-live="polite">Nothing is sent from this page.</p>
+        </div>
+      </form>
+    </section>
+
+    <footer id="commissions">
+      <span class="commission">
+        <button class="commission-link" type="button" aria-expanded="false" aria-controls="commission-form">Commissions</button>
+        <span class="commission-note">Begin with a material, a memory or both.</span>
+      </span>
+    </footer>
+  </main>
+
+  <div class="photo-viewer" role="dialog" aria-modal="true" aria-label="Palette source photograph" aria-hidden="true" tabindex="-1">
+    <img src="assets/shallow-water.jpg" alt="" />
+  </div>
+
+  <script>
+    (function () {
+      var viewer = document.querySelector('.photo-viewer');
+      var image = viewer.querySelector('img');
+      var triggers = document.querySelectorAll('.swatch-row[data-photo]');
+      var activeTrigger = null;
+
+      function openPhoto(trigger) {
+        activeTrigger = trigger;
+        image.src = trigger.getAttribute('data-photo');
+        image.alt = trigger.getAttribute('data-alt');
+        trigger.setAttribute('aria-expanded', 'true');
+        viewer.setAttribute('aria-hidden', 'false');
+        viewer.classList.add('is-open');
+        viewer.focus({ preventScroll: true });
+      }
+
+      function closePhoto() {
+        if (!activeTrigger) return;
+        viewer.classList.remove('is-open');
+        viewer.setAttribute('aria-hidden', 'true');
+        activeTrigger.setAttribute('aria-expanded', 'false');
+        activeTrigger.focus({ preventScroll: true });
+        activeTrigger = null;
+      }
+
+      triggers.forEach(function (trigger) {
+        trigger.addEventListener('click', function () { openPhoto(trigger); });
+        trigger.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            openPhoto(trigger);
+          }
+        });
+      });
+
+      viewer.addEventListener('click', closePhoto);
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') closePhoto();
+      });
+
+      var commissionButton = document.querySelector('.commission-link');
+      var commissionPanel = document.querySelector('.commission-panel');
+      var commissionClose = document.querySelector('.commission-close');
+      var commissionForm = document.querySelector('.commission-form');
+      var commissionStatus = document.querySelector('.form-status');
+
+      function openCommission() {
+        commissionPanel.hidden = false;
+        commissionPanel.classList.add('is-open');
+        commissionButton.setAttribute('aria-expanded', 'true');
+        commissionPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        window.setTimeout(function () {
+          document.querySelector('#inquiry-name').focus({ preventScroll: true });
+        }, 280);
+      }
+
+      function closeCommission() {
+        commissionPanel.classList.remove('is-open');
+        commissionPanel.hidden = true;
+        commissionButton.setAttribute('aria-expanded', 'false');
+        commissionButton.focus({ preventScroll: true });
+      }
+
+      function copyText(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+          return navigator.clipboard.writeText(text);
+        }
+        return new Promise(function (resolve, reject) {
+          var copyArea = document.createElement('textarea');
+          copyArea.value = text;
+          copyArea.setAttribute('readonly', '');
+          copyArea.style.position = 'fixed';
+          copyArea.style.opacity = '0';
+          document.body.appendChild(copyArea);
+          copyArea.select();
+          try {
+            if (!document.execCommand('copy')) throw new Error('Copy unavailable');
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+          document.body.removeChild(copyArea);
+        });
+      }
+
+      commissionButton.addEventListener('click', function () {
+        if (commissionPanel.hidden) openCommission();
+        else closeCommission();
+      });
+      commissionClose.addEventListener('click', closeCommission);
+
+      commissionForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        if (!commissionForm.reportValidity()) return;
+        var data = new FormData(commissionForm);
+        var lines = [
+          'Commission inquiry',
+          '',
+          'Name: ' + data.get('name'),
+          'Email: ' + data.get('email'),
+          'Story category: ' + data.get('category'),
+          'Material: ' + data.get('material'),
+          'Collage: ' + (data.get('collage') ? 'Yes' : 'No'),
+          'Size or setting: ' + (data.get('size') || 'Open'),
+          'Color direction: ' + (data.get('color') || 'Open'),
+          'Timing: ' + (data.get('timing') || 'Open'),
+          'Budget range: ' + (data.get('budget') || 'Open'),
+          '',
+          'The story:',
+          data.get('story')
+        ];
+
+        copyText(lines.join('\n')).then(function () {
+          commissionStatus.textContent = 'Inquiry copied — ready to paste into a message.';
+        }).catch(function () {
+          commissionStatus.textContent = 'Copy was unavailable. Select the details and copy them manually.';
+        });
+      });
+
+      var soundButton = document.querySelector('.sound-control');
+      var soundLabel = soundButton.querySelector('.sound-control__label');
+      var tracks = [
+        { src: 'assets/clair-de-lune.mp3', title: 'Clair de lune', composer: 'Claude Debussy' },
+        { src: 'assets/gymnopedie-no-1.mp3', title: 'Gymnopédie No. 1', composer: 'Erik Satie' },
+        { src: 'assets/promenade.mp3', title: 'Promenade', composer: 'Modest Mussorgsky' }
+      ];
+      var trackIndex = 0;
+      var audio = new Audio();
+      var isPlaying = false;
+      var failedTracks = 0;
+      audio.autoplay = true;
+      audio.preload = 'auto';
+      audio.volume = 0.42;
+
+      function currentTrackLabel() {
+        return tracks[trackIndex].composer + ' — ' + tracks[trackIndex].title;
+      }
+
+      function loadTrack() {
+        audio.src = tracks[trackIndex].src;
+        audio.load();
+        soundButton.title = currentTrackLabel();
+        if (!isPlaying) soundButton.setAttribute('aria-label', 'Play ' + currentTrackLabel());
+      }
+
+      function showPlaying() {
+        isPlaying = true;
+        failedTracks = 0;
+        soundButton.setAttribute('aria-pressed', 'true');
+        soundButton.setAttribute('aria-label', 'Pause ' + currentTrackLabel());
+        soundLabel.textContent = 'Pause';
+      }
+
+      function showPaused() {
+        isPlaying = false;
+        soundButton.setAttribute('aria-pressed', 'false');
+        soundButton.setAttribute('aria-label', 'Play ' + currentTrackLabel());
+        soundLabel.textContent = 'Listen';
+      }
+
+      function playTrack() {
+        return audio.play().then(function () {
+          showPlaying();
+          return true;
+        }).catch(function () {
+          showPaused();
+          return false;
+        });
+      }
+
+      audio.addEventListener('ended', function () {
+        trackIndex = (trackIndex + 1) % tracks.length;
+        loadTrack();
+        playTrack();
+      });
+
+      audio.addEventListener('error', function () {
+        failedTracks += 1;
+        if (failedTracks >= tracks.length) {
+          showPaused();
+          soundButton.setAttribute('aria-label', 'Music is unavailable');
+          return;
+        }
+        trackIndex = (trackIndex + 1) % tracks.length;
+        loadTrack();
+        if (isPlaying) playTrack();
+      });
+
+      loadTrack();
+      playTrack();
+
+      soundButton.addEventListener('click', function () {
+        if (isPlaying) {
+          audio.pause();
+          showPaused();
+        } else {
+          playTrack();
+        }
+      });
+    }());
+  </script>
+</body>
+</html>
