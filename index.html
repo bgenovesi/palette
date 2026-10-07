@@ -280,19 +280,6 @@
       border-top: 0;
     }
 
-    .commission-panel.reveal {
-      animation: commission-rise .75s cubic-bezier(.22,.61,.36,1) both;
-    }
-
-    @keyframes commission-rise {
-      from { opacity: 0; transform: translateY(56px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .commission-panel.reveal { animation: none; }
-    }
-
     .commission-heading {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
@@ -1004,28 +991,20 @@
       var commissionClose = document.querySelector('.commission-close');
       var commissionForm = document.querySelector('.commission-form');
       var commissionStatus = document.querySelector('.form-status');
-      var commissionAutoRevealed = false;
-      var commissionUserDismissed = false;
 
-      function openCommission(options) {
-        var opts = options || {};
+      function openCommission() {
         commissionPanel.hidden = false;
         commissionPanel.classList.add('is-open');
-        commissionPanel.classList.add('reveal');
         commissionButton.setAttribute('aria-expanded', 'true');
-        if (opts.scroll !== false) {
-          commissionPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          window.setTimeout(function () {
-            document.querySelector('#inquiry-name').focus({ preventScroll: true });
-          }, 280);
-        }
+        commissionPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        window.setTimeout(function () {
+          document.querySelector('#inquiry-name').focus({ preventScroll: true });
+        }, 280);
       }
 
       function closeCommission() {
         commissionPanel.classList.remove('is-open');
-        commissionPanel.classList.remove('reveal');
         commissionPanel.hidden = true;
-        commissionUserDismissed = true;
         commissionButton.setAttribute('aria-expanded', 'false');
         commissionButton.focus({ preventScroll: true });
       }
@@ -1057,22 +1036,6 @@
         else closeCommission();
       });
       commissionClose.addEventListener('click', closeCommission);
-
-      // Slide the commission panel up when the reader pulls toward the bottom.
-      // One-shot: never re-opens on scroll after an explicit close.
-      if ('IntersectionObserver' in window) {
-        var commissionFooter = document.querySelector('footer#commissions');
-        var commissionObserver = new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry) {
-            if (entry.isIntersecting && !commissionAutoRevealed && !commissionUserDismissed && commissionPanel.hidden) {
-              commissionAutoRevealed = true;
-              openCommission({ scroll: false });
-              commissionObserver.disconnect();
-            }
-          });
-        }, { rootMargin: '0px 0px -8% 0px', threshold: 0 });
-        if (commissionFooter) commissionObserver.observe(commissionFooter);
-      }
 
       commissionForm.addEventListener('submit', function (event) {
         event.preventDefault();
